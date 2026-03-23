@@ -1,10 +1,12 @@
 {
   "compilerOptions": {
-    "baseUrl": ".", 
+    "ignoreDeprecations": "6.0",
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"]
-    },
-    "ignoreDeprecations": "6.0"
+      "@/*": [
+        "./*"
+      ]
+    }
   },
   "include": [
     "**/*.ts",

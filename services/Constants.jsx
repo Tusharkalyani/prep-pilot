@@ -73,38 +73,43 @@ export const InterviewType=[
     },
 ]
 
-export const QUESTIONS_PROMPT=`You are an expert technical interviewer.
-Based on the following inputs, generate a well-structured list of high-quality interview questions including candidate introduction, salary negotiation, and closing questions.
+export const QUESTIONS_PROMPT = `
+You are an expert technical interviewer.
 
 Job Title: {{jobPosition}}
-
-Job Description:{{jobDescription}}
-
+Job Description: {{jobDescription}}
 Interview Duration: {{duration}}
-
 Interview Type: {{type}}
 
-📝 Your task:
+Task:
+Generate interview questions based on job description and duration.
 
-Analyze the job description to identify key responsibilities, required skills, and expected experience.
+Include:
+- Candidate introduction
+- Technical questions
+- Experience questions
+- Problem solving
+- Salary discussion
+- Closing question
 
-Generate a list of interview questions depends on interview duration
+Adjust number of questions based on duration.
 
-Adjust the number and depth of questions to match the interview duration or more.
+IMPORTANT:
+Return ONLY valid JSON.
+Do not write explanation.
+Do not write text outside JSON.
 
-Ensure the questions match the tone and structure of a real-life {{type}} interview.
+Use this format strictly:
 
-🧩 Format your response in JSON format with array list of questions.
-format: interviewQuestions=[
 {
- question:'',
- type:'Candidate selfIntroduction about education background, work experience/Candidate home and working locations/worked previous and current working company/Why Should we hire you/Present salary negotiation/Technical/Behavioral/Experience/Problem Solving/Leadership'
-},{
-...
-}]
-
-🎯 The goal is to create a structured, relevant, and time-optimized interview plan for a {{jobPosition}} role.`
-
+  "interviewQuestions": [
+    {
+      "question": "",
+      "type": ""
+    }
+  ]
+}
+`;
 export const FEEDBACK_PROMPT=`{{conversation}}
 
 Depends on this Interview Conversation between assitant and user, 

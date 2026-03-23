@@ -15,7 +15,7 @@ export async function POST(req) {
     });
 
     const completion = await openai.chat.completions.create({
-      model: "mistralai/mistral-7b-instruct", // <-- switched model here
+      model: "meta-llama/llama-3-8b-instruct", // <-- switched model here
       messages: [
         { role: "user", content: FINAL_PROMPT }
       ],

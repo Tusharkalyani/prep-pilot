@@ -2,43 +2,68 @@ import { QUESTIONS_PROMPT } from "@/services/Constants";
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
-
 export async function POST(req) {
 
+  let body = null;
 
-    const {jobPosition,jobDescription,duration,type}=await req.json();
-    const FINAL_PROMPT=QUESTIONS_PROMPT
-    .replace('{{jobTitle}}',jobPosition)
-    .replace('{{jobDescription}}',jobDescription)
-    .replace('{{duration}}',duration)
-    .replace('{{type}}',type)
+  try {
+    body = await req.json();
+  } catch (err) {
+    console.log("Body parse error");
+    return NextResponse.json({
+      error: "Invalid request body",
+    });
+  }
 
-    console.log(FINAL_PROMPT);
+  if (!body) {
+    return NextResponse.json({
+      error: "Empty body",
+    });
+  }
 
+  const {
+    jobPosition,
+    jobDescription,
+    duration,
+    type,
+  } = body;
 
-    try{
+  const FINAL_PROMPT = QUESTIONS_PROMPT
+    .replace(/{{jobPosition}}/g, jobPosition || "")
+    .replace(/{{jobDescription}}/g, jobDescription || "")
+    .replace(/{{duration}}/g, duration || "")
+    .replace(/{{type}}/g, type || "");
+
+  try {
+
     const openai = new OpenAI({
-        baseURL: "https://openrouter.ai/api/v1",
-        apiKey: process.env.OPENROUTER_API_KEY,
-      })
-      const completion = await openai.chat.completions.create({
-        model: "mistralai/mistral-7b-instruct",
-        messages: [
-          { role: "user", content: FINAL_PROMPT }
-        ],
-        responseformat:'json'
-      })
-      console.log(completion.choices[0].message)
-      console.log("OpenRouter response:", completion);
+      baseURL: "https://openrouter.ai/api/v1",
+      apiKey: process.env.OPENROUTER_API_KEY,
+    });
 
-      // Instead of returning completion.choices[0].message directly, wrap it in { content: ... }
-      const message = completion.choices[0].message;
-      let content = message?.content || message?.Content || message;
-      return NextResponse.json({ content });
-    }
-    catch(e)
-    {
-        console.log(e)
-        return NextResponse.json(e)
-}
+    const completion =
+      await openai.chat.completions.create({
+        model: "meta-llama/llama-3-8b-instruct",
+        messages: [
+          {
+            role: "user",
+            content: FINAL_PROMPT,
+          },
+        ],
+      });
+
+    const content =
+      completion?.choices?.[0]?.message?.content || "";
+
+    return NextResponse.json({
+      content,
+    });
+
+  } catch (e) {
+    console.log("AI error:", e);
+
+    return NextResponse.json({
+      error: e.message,
+    });
+  }
 }

@@ -52,12 +52,9 @@ function StartInterview() {
     }
   }, [interviewInfo, interview_id, setInterviewInfo, router]);
 
-  useEffect(() => {
-    if (interviewInfo && interviewInfo?.jobPosition && vapi && !start) {
-      setStart(true);
-      startCall();
-    }
-  }, [interviewInfo, vapi]);
+  // Manual start logic replaces the auto-start useEffect
+  // const hasStartedRef = useRef(false);
+  // useEffect removed to prevent autoplay policy issues
 
   const startCall = async () => {
     const jobPosition = interviewInfo?.jobPosition || "Unknown Position";
@@ -71,12 +68,12 @@ function StartInterview() {
       firstMessage: `Hi ${interviewInfo?.candidate_name}, how are you? Ready for your interview on ${interviewInfo?.jobPosition}?`,
       transcriber: {
         provider: "deepgram",
-        model: "nova-3",
+        model: "nova-2",
         language: "en-US",
       },
       voice: {
-        provider: "playht",
-        voiceId: "jennifer",
+        provider: "openai",
+        voiceId: "alloy",
       },
       model: {
         provider: "openai",
@@ -96,6 +93,8 @@ Questions: ${questionList}
       },
     };
 
+    console.log("Starting Vapi with options:", assistantOptions);
+
     if (!vapi) {
       toast.error("Vapi client not initialized!");
       return;
@@ -111,6 +110,11 @@ Questions: ${questionList}
       console.error("Error starting Vapi:", error);
       toast.error("Failed to start AI interview. See console for details.");
     }
+  };
+
+  const handleManualStart = () => {
+    setStart(true);
+    startCall();
   };
 
   useEffect(() => {
@@ -146,7 +150,19 @@ Questions: ${questionList}
     });
     vapi.on("speech-start", handleSpeechStart);
     vapi.on("speech-end", handleSpeechEnd);
-    vapi.on("call-end", async () => {
+    vapi.on("error", (error) => {
+      console.error("Vapi Error Event:", error);
+      toast.error(`Vapi Error: ${error.message || JSON.stringify(error)}`);
+    });
+    vapi.on("call-end", async (call) => {
+      const reason = call?.reason;
+      console.log("Call ended. Reason:", reason);
+      
+      if (reason === "participant-ejected" || reason === "network-error") {
+        toast.error(`Call ended unexpectedly: ${reason}`);
+        return;
+      }
+
       toast("Call has ended. Generating feedback...");
       setIsGeneratingFeedback(true);
       await handleFeedbackGeneration();
@@ -157,6 +173,7 @@ Questions: ${questionList}
       vapi.off("call-start", () => {});
       vapi.off("speech-start", handleSpeechStart);
       vapi.off("speech-end", handleSpeechEnd);
+      vapi.off("error", () => {});
       vapi.off("call-end", () => {});
     };
   }, [vapi]);
@@ -171,7 +188,7 @@ Questions: ${questionList}
       const jobDescription = interviewInfo?.jobDescription;
 
       const result = await axios.post("/api/ai-feedback", {
-        transcript,
+        conversation: transcript,
         jobRole,
         jobDescription,
       });
@@ -187,21 +204,36 @@ Questions: ${questionList}
 
       // Step 2: Clean
       Content = Content.replace(/^<s>\s*/gi, "")
-        .replace(/<\/s>$/gi, "")
-        .replace(/```json\s*/gi, "")
-        .replace(/```/g, "")
-        .trim();
+  .replace(/<\/s>$/gi, "")
+  .replace(/```json\s*/gi, "")
+  .replace(/```/g, "")
+  .trim();
 
-      console.log("🧩 Cleaned AI Feedback Content:", Content);
+console.log("🧩 Cleaned AI Feedback Content:", Content);
 
-      // Step 3: Parse
-      let parsedTranscript;
-      try {
-        parsedTranscript = JSON.parse(Content);
-      } catch (e) {
-        console.error("❌ Failed to parse feedback JSON:", Content);
-        throw new Error("Could not parse AI feedback JSON");
-      }
+
+// ✅ SAFE PARSE FIX
+let parsedTranscript;
+
+try {
+
+  // try direct parse
+  parsedTranscript = JSON.parse(Content);
+
+} catch (e) {
+
+  // extract JSON block
+  const match = Content.match(/\{[\s\S]*\}/);
+
+  if (!match) {
+    console.error("❌ Failed to parse feedback JSON:", Content);
+    throw new Error("Could not parse AI feedback JSON");
+  }
+
+  parsedTranscript = JSON.parse(match[0]);
+}
+
+console.log("✅ Parsed Feedback:", parsedTranscript);
 
       // Step 4: Insert into Supabase
       const { error: insertError } = await supabase.from("interview_results").insert([
@@ -349,18 +381,29 @@ Questions: ${questionList}
         <div className="bg-white rounded-xl p-4 shadow-md border border-gray-200">
           <div className="flex flex-col items-center">
             <div className="flex gap-4 mb-4">
-              <AlertConfirmation stopInterview={stopInterview}>
+              {!start ? (
                 <button
-                  className="p-3 rounded-full bg-red-100 text-red-600 hover:bg-red-200 shadow-sm transition-all flex items-center gap-2"
-                  aria-label="End call"
+                  onClick={handleManualStart}
+                  className="p-3 px-6 rounded-full bg-blue-600 text-white hover:bg-blue-700 shadow-md transition-all flex items-center gap-2 font-semibold"
+                  aria-label="Start call"
                 >
-                  <Phone size={20} />
-                  <span>End Interview</span>
+                  <Mic size={20} />
+                  <span>Start Interview</span>
                 </button>
-              </AlertConfirmation>
+              ) : (
+                <AlertConfirmation stopInterview={stopInterview}>
+                  <button
+                    className="p-3 rounded-full bg-red-100 text-red-600 hover:bg-red-200 shadow-sm transition-all flex items-center gap-2"
+                    aria-label="End call"
+                  >
+                    <Phone size={20} />
+                    <span>End Interview</span>
+                  </button>
+                </AlertConfirmation>
+              )}
             </div>
             <p className="text-sm text-gray-500">
-              {activeUser ? "Please respond..." : "AI is speaking..."}
+              {!start ? "Click to start the interview session" : activeUser ? "Please respond..." : "AI is speaking..."}
             </p>
           </div>
         </div>
