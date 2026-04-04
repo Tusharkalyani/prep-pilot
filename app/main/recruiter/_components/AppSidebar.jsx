@@ -42,7 +42,9 @@ export function AppSidebar() {
       <div className="px-4">
         <Button
           className="w-full cursor-pointer"
-          onClick={() => router.push("/recruiter/dashboard/create-interview")}
+          onClick={() =>
+            router.push("/main/recruiter/dashboard/create-interview")
+          }
         >
           <Plus className="mr-2" />
           Create New Interview
@@ -56,14 +58,14 @@ export function AppSidebar() {
               <SidebarMenuItem key={index} className="p-1">
                 <SidebarMenuButton
                   asChild
-                  className={`p-3 ${path === option.path && "bg-blue-50"
-                    }`}
+                  className={`p-3 ${path === option.path && "bg-blue-50"}`}
                 >
                   <Link href={option.path} className="flex items-center gap-3">
                     <option.icon className="w-5 h-5" />
                     <span
-                      className={`text-base font-medium ${path == option.path && "text-primary"
-                        }`}
+                      className={`text-base font-medium ${
+                        path == option.path && "text-primary"
+                      }`}
                     >
                       {option.name}
                     </span>
@@ -76,19 +78,17 @@ export function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter className="p-3">
-      <Button
-        className="px-5 cursor-pointer"
-        onClick={async () => {
-          await signOut();
-          router.push("/login");
-        }}
-      >
-        <LogOutIcon className="mr-2" />
-        Logout
-      </Button>
-
-
-</SidebarFooter>
+        <Button
+          className="px-5 cursor-pointer"
+          onClick={async () => {
+            await signOut();
+            router.push("/login");
+          }}
+        >
+          <LogOutIcon className="mr-2" />
+          Logout
+        </Button>
+      </SidebarFooter>
     </Sidebar>
   );
 }

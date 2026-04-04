@@ -19,18 +19,20 @@ function AllInterview() {
 
   const GetInterviewList = async () => {
     let { data: Interviews, error } = await supabase
-    .from("Interviews")
-    .select("*, interview_results(*)") // <-- JOIN the related table
-    .eq("userEmail", user?.email)
-    .order('id', { ascending: false })
-  
+      .from("Interviews")
+      .select("*, interview_results(*)") // <-- JOIN the related table
+      .eq("userEmail", user?.email)
+      .order("id", { ascending: false });
+
     console.log(Interviews);
     setInterviewList(Interviews);
   };
 
   return (
     <div className="my-5">
-      <h2 className="font-bold text-2xl mb-4">All Previously Created Interviews</h2>
+      <h2 className="font-bold text-2xl mb-4">
+        All Previously Created Interviews
+      </h2>
 
       {InterviewList?.length === 0 ? (
         <div className="p-5 flex flex-col items-center gap-3 text-center text-gray-500 bg-white border rounded-xl shadow-sm">
@@ -38,7 +40,9 @@ function AllInterview() {
           <h2 className="text-base">You don't have any interview created</h2>
           <Button
             className="cursor-pointer"
-            onClick={() => router.push("/dashboard/create-interview")}
+            onClick={() =>
+              router.push("/main/recruiter/dashboard/create-interview")
+            }
           >
             + Create New Interview
           </Button>
