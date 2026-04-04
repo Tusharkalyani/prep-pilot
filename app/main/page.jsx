@@ -10,9 +10,9 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (userProfile?.role === "recruiter") {
-      router.push("/recruiter/dashboard");
+      router.push("/main/recruiter/dashboard");
     } else if (userProfile?.role === "candidate") {
-      router.push("/candidate/dashboard");
+      router.push("/main/candidate/dashboard");
     }
   }, [userProfile, router]);
 
