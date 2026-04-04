@@ -28,10 +28,6 @@ const nextConfig = {
     ],
   },
 
-  turbopack: {
-    root: __dirname,
-  },
-
   eslint: {
     ignoreDuringBuilds: true,
   },
@@ -42,7 +38,7 @@ const nextConfig = {
 
   experimental: {
     serverActions: {
-      allowedOrigins: ["*"],
+      allowedOrigins: ["prep-pilot-blush.vercel.app"],
     },
   },
 };
