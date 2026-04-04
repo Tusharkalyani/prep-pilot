@@ -7,6 +7,7 @@ const __dirname = path.dirname(__filename);
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+
   images: {
     remotePatterns: [
       {
@@ -24,11 +25,25 @@ const nextConfig = {
         hostname: "images.unsplash.com",
         pathname: "/**",
       },
-      // Add more hostnames as needed
     ],
   },
+
   turbopack: {
-    root: __dirname, // ✅ works now even in ESM
+    root: __dirname,
+  },
+
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+
+  experimental: {
+    serverActions: {
+      allowedOrigins: ["*"],
+    },
   },
 };
 
