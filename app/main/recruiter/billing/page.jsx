@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { useUser } from "@/app/provider";
+import { UserAuth } from "@/context/AuthContext";
 
 const CREDIT_PACKAGES = [
   {
@@ -60,7 +60,7 @@ export default function Billing() {
   const [selectedPackage, setSelectedPackage] = useState(CREDIT_PACKAGES[1]); // Default to professional
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { user, updateUserCredits } = useUser();
+  const { userProfile: user, updateUserCredits } = UserAuth();
 
   const handlePurchase = async () => {
     setLoading(true);

@@ -1,17 +1,17 @@
 import { Phone, Video, Coins, AlertCircle } from 'lucide-react'
 import React from 'react'
 import Link from 'next/link'
-import { useUser } from '@/app/provider'
+import { UserAuth } from '@/context/AuthContext'
 import { Button } from '@/components/ui/button'
 
 function CreateOptions() {
-  const { user } = useUser();
+  const { userProfile: user } = UserAuth();
   const hasCredits = (user?.credits || 0) > 0;
 
   return (
     <div className='grid grid-cols-1 md:grid-cols-2 gap-5'>
       <div className={`relative ${!hasCredits ? 'opacity-60' : ''}`}>
-        <Link href={hasCredits ? '/recruiter/dashboard/create-interview' : '#'}>
+        <Link href={hasCredits ? '/main/recruiter/dashboard/create-interview' : '#'}>
           <div className={`bg-white border border-gray-200 rounded-lg p-5 shadow-sm ${hasCredits ? 'cursor-pointer hover:shadow-md transition-shadow' : 'cursor-not-allowed'}`}>
             <div className="flex items-center justify-between mb-3">
               <Video className='p-2 text-blue-600 bg-blue-50 rounded-lg h-12 w-12' />
@@ -37,7 +37,7 @@ function CreateOptions() {
         {!hasCredits && (
           <div className="absolute inset-0 flex items-center justify-center">
             <Button 
-              onClick={() => window.location.href = '/recruiter/billing'}
+              onClick={() => window.location.href = '/main/recruiter/billing'}
               className="bg-blue-600 hover:bg-blue-700 text-white"
             >
               Buy Credits

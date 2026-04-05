@@ -135,13 +135,13 @@ Best regards,
       <div className='grid grid-cols-2 gap-5 w-full'>
         <Button 
           variant='outline' 
-          onClick={() => router.push('/dashboard')}
+          onClick={() => router.push('/main/recruiter/dashboard')}
           className='flex items-center gap-2'
         >
           <ArrowLeft className='size-4' /> Back to Dashboard
         </Button>
         <Button 
-          onClick={() => router.push('/dashboard/create-interview')}
+          onClick={() => router.push('/main/recruiter/dashboard/create-interview')}
           className='flex items-center gap-2'
         >
           <Plus className='size-4' /> Create New Interview

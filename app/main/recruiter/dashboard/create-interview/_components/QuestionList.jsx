@@ -1,5 +1,5 @@
 "use client";
-import { useUser } from "@/app/provider";
+import { UserAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { Loader2Icon, PlusIcon, Trash2Icon } from "lucide-react";
@@ -15,7 +15,7 @@ function QuestionList({ formData, onCreateLink }) {
   const [newQuestion, setNewQuestion] = useState("");
   const [newQuestionType, setNewQuestionType] = useState("behavioral");
 
-  const { user, updateUserCredits } = useUser();
+  const { userProfile: user, updateUserCredits } = UserAuth();
 
   const hasCalled = useRef(false);
 

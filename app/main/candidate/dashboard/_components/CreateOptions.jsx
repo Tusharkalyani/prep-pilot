@@ -66,7 +66,7 @@ function CreateOptions() {
   </div>
 
   {/* Upload CV Card */}
-  <Link href={'/candidate/upload-cv'}>
+  <Link href={'/main/candidate/upload-cv'}>
     <div className='bg-white border border-gray-200 rounded-lg p-5 shadow-sm cursor-pointer flex flex-col h-full'>
       <FileIcon className='p-2 text-blue-600 bg-blue-50 rounded-lg h-12 w-12' />
       <h2 className="mt-3 font-semibold">Upload your CV</h2>

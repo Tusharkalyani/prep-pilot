@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { useUser } from '@/app/provider';
+import { UserAuth } from '@/context/AuthContext';
 import { supabase } from '@/services/supabaseClient';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,7 +11,7 @@ import { User, Mail, Camera, Save, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function RecruiterProfile() {
-  const { user } = useUser();
+  const { userProfile: user } = UserAuth();
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [profileData, setProfileData] = useState({

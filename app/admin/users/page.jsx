@@ -19,10 +19,10 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { useUser } from '@/app/provider';
+import { UserAuth } from '@/context/AuthContext';
 
 function UserManagement() {
-  const { user } = useUser();
+  const { userProfile: user } = UserAuth();
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [loading, setLoading] = useState(true);

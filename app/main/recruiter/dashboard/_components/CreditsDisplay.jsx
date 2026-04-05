@@ -1,13 +1,13 @@
 "use client";
 import React from "react";
-import { useUser } from "@/app/provider";
+import { UserAuth } from "@/context/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Coins, Plus, AlertCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 function CreditsDisplay() {
-  const { user } = useUser();
+  const { userProfile: user } = UserAuth();
   const router = useRouter();
 
   const handleBuyCredits = () => {

@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/services/supabaseClient";
-import { useUser } from "@/app/provider";
+import { UserAuth } from "@/context/AuthContext";
 import InterviewCard from "./interviewcard";
 import { toast } from "sonner";
 
@@ -12,7 +12,7 @@ function LatestInterviewsList() {
   const router = useRouter();
 
   const [InterviewList, setInterviewList] = useState([]);
-  const { user } = useUser();
+  const { userProfile: user } = UserAuth();
 
   useEffect(() => {
     user && GetInterviewList();
@@ -45,7 +45,7 @@ function LatestInterviewsList() {
           <h2 className="text-base">You don't have any interview created</h2>
           <Button
             className="cursor-pointer"
-            onClick={() => router.push("/recruiter/dashboard/create-interview")}
+            onClick={() => router.push("/main/recruiter/dashboard/create-interview")}
           >
             + Create New Interview
           </Button>

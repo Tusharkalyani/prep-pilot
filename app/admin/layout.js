@@ -1,13 +1,13 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { useUser } from '@/app/provider';
+import { UserAuth } from '@/context/AuthContext';
 import { useRouter, usePathname } from 'next/navigation';
 import { Shield } from 'lucide-react';
 import { supabase } from '@/services/supabaseClient';
 import { toast } from 'sonner';
 
 function AdminLayout({ children }) {
-  const { user } = useUser();
+  const { userProfile: user } = UserAuth();
   const router = useRouter();
   const pathname = usePathname();
   const [isChecking, setIsChecking] = useState(true);

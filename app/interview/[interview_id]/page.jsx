@@ -9,7 +9,7 @@ import { supabase } from "@/services/supabaseClient";
 import { toast } from "sonner";
 import { InterviewDataContext } from "@/context/InterviewDataContext";
 import { motion } from "framer-motion";
-import { useUser } from "@/app/provider";
+import { UserAuth } from "@/context/AuthContext";
 import axios from "axios";
 
 function Interview() {
@@ -28,7 +28,7 @@ function Interview() {
   const { interviewInfo, setInterviewInfo } = useContext(InterviewDataContext);
   const router = useRouter();
   const [accessDenied, setAccessDenied] = useState(false);
-  const { user } = useUser();
+  const { userProfile: user } = UserAuth();
 
   let provider = null;
   if (typeof window !== "undefined") {

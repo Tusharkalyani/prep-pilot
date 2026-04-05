@@ -105,7 +105,7 @@ export default function AuthCallback() {
       if (finalRole === "recruiter") {
         router.push("/main/recruiter/dashboard");
       } else {
-        router.push("/candidate/dashboard");
+        router.push("/main/candidate/dashboard");
       }
     };
 

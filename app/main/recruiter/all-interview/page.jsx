@@ -1,5 +1,5 @@
 "use client";
-import { useUser } from "@/app/provider";
+import { UserAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/services/supabaseClient";
 import { Video } from "lucide-react";
@@ -11,7 +11,7 @@ function AllInterview() {
   const router = useRouter();
 
   const [InterviewList, setInterviewList] = useState([]);
-  const { user } = useUser();
+  const { userProfile: user } = UserAuth();
 
   useEffect(() => {
     user && GetInterviewList();

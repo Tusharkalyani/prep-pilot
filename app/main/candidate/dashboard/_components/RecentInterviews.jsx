@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { useUser } from '@/app/provider';
+import { UserAuth } from '@/context/AuthContext';
 import { supabase } from '@/services/supabaseClient';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -10,7 +10,7 @@ import moment from 'moment';
 import Link from 'next/link';
 
 export default function RecentInterviews() {
-  const { user } = useUser();
+  const { userProfile: user } = UserAuth();
   const [recentInterviews, setRecentInterviews] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -101,7 +101,7 @@ export default function RecentInterviews() {
             Recent Interviews
           </CardTitle>
           {recentInterviews.length > 0 && (
-            <Link href="/candidate/interviews">
+            <Link href="/main/candidate/interviews">
               <Button variant="outline" size="sm">
                 View All
               </Button>

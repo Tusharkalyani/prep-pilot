@@ -2,13 +2,13 @@
 import { supabase } from "@/services/supabaseClient";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { useUser } from "@/app/provider";
+import { UserAuth } from "@/context/AuthContext";
 import InterviewDetailContainer from "./_components/InteviewDetailContainer";
 import CandidateList from "./_components/CandidateList";
 
 function InterviewDetail() {
   const { interview_id } = useParams();
-  const { user } = useUser();
+  const { userProfile: user } = UserAuth();
   const [interviewDetail, setInterviewDetail] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

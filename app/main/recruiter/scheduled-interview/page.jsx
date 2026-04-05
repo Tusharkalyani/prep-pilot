@@ -1,5 +1,5 @@
 "use client";
-import { useUser } from "@/app/provider";
+import { UserAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/services/supabaseClient";
 import { Video } from "lucide-react";
@@ -8,7 +8,7 @@ import InterviewCard from "../dashboard/_components/interviewcard";
 import { useRouter } from "next/navigation";
 
 function ScheduledInterview() {
-  const { user } = useUser();
+  const { userProfile: user } = UserAuth();
   const [interviewList, setInterviewList] = useState();
 
   useEffect(() => {
@@ -44,7 +44,7 @@ function ScheduledInterview() {
           <h2 className="text-base">You don't have any interview created</h2>
           <Button
             className="cursor-pointer"
-            onClick={() => router.push("/recruiter/dashboard/create-interview")}
+            onClick={() => router.push("/main/recruiter/dashboard/create-interview")}
           >
             + Create New Interview
           </Button>
