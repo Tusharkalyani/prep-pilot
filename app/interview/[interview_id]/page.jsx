@@ -1,23 +1,23 @@
-'use client';
-import React, { useEffect, useState, useContext, use } from 'react';
-import Image from 'next/image';
-import { Clock, Mic, Video, CheckCircle, ChevronRight } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { useParams, useRouter } from 'next/navigation';
-import { supabase } from '@/services/supabaseClient';
-import { toast } from 'sonner';
-import { InterviewDataContext } from '@/context/InterviewDataContext';
-import { motion } from 'framer-motion';
-import { useUser } from '@/app/provider';
-import axios from 'axios';
+"use client";
+import React, { useEffect, useState, useContext, use } from "react";
+import Image from "next/image";
+import { Clock, Mic, Video, CheckCircle, ChevronRight } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { useParams, useRouter } from "next/navigation";
+import { supabase } from "@/services/supabaseClient";
+import { toast } from "sonner";
+import { InterviewDataContext } from "@/context/InterviewDataContext";
+import { motion } from "framer-motion";
+import { useUser } from "@/app/provider";
+import axios from "axios";
 
 function Interview() {
   const params = useParams();
   const interview_id = params?.interview_id;
   const [interviewData, setInterviewData] = useState(null);
-  const [userName, setUserName] = useState('');
-  const [userEmail, setUserEmail] = useState('');
+  const [userName, setUserName] = useState("");
+  const [userEmail, setUserEmail] = useState("");
   // const [interviewDetails, setInterviewDetails] = useState('');
   // const [interviewQuestions, setInterviewQuestions] = useState('');
   // const [interviewDuration, setInterviewDuration] = useState('');
@@ -31,12 +31,13 @@ function Interview() {
   const { user } = useUser();
 
   let provider = null;
-  if (typeof window !== 'undefined') {
+  if (typeof window !== "undefined") {
     try {
-      provider = JSON.parse(localStorage.getItem('supabase.auth.token'))?.currentSession?.user?.app_metadata?.provider;
+      provider = JSON.parse(localStorage.getItem("supabase.auth.token"))
+        ?.currentSession?.user?.app_metadata?.provider;
     } catch {}
   }
-  const isGoogleUser = provider === 'google';
+  const isGoogleUser = provider === "google";
 
   useEffect(() => {
     if (interview_id) GetInterviewDetails();
@@ -45,7 +46,9 @@ function Interview() {
   useEffect(() => {
     const checkAccess = async () => {
       // 1. Get current session
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (!session?.user) {
         router.push("/login");
         return;
@@ -57,28 +60,27 @@ function Interview() {
   }, [interviewData, interview_id]);
 
   useEffect(() => {
-    if (user && !userEmail) setUserEmail(user.email || '');
-    if (user && !userName) setUserName(user.name || '');
+    if (user && !userEmail) setUserEmail(user.email || "");
+    if (user && !userName) setUserName(user.name || "");
   }, [user]);
 
   const GetInterviewDetails = async () => {
     setLoading(true);
     try {
       const { data: Interviews, error } = await supabase
-        .from('Interviews')
-        .select('*, interview_results(*)')
-        .eq('interview_id', interview_id);
-
+        .from("Interviews")
+        .select("*, interview_results(*)")
+        .eq("interview_id", interview_id);
 
       if (error) throw error;
-      if (!Interviews?.length) throw new Error('No interview found');
-      
-      console.log('Interviews:', Interviews);
+      if (!Interviews?.length) throw new Error("No interview found");
+
+      console.log("Interviews:", Interviews);
       // Set the interview data to state
 
       setInterviewData(Interviews[0]);
     } catch (error) {
-      toast.error(error.message || 'Failed to fetch details');
+      toast.error(error.message || "Failed to fetch details");
     } finally {
       setLoading(false);
     }
@@ -89,15 +91,15 @@ function Interview() {
       toast.warning("Full name is required");
       return false;
     }
-  
+
     if (userName.trim().split(" ").length < 2) {
       toast.warning("Please provide your full name (e.g., First Last)");
       return false;
     }
-  
+
     return true;
   };
-  
+
   const onJoinInterview = async () => {
     if (!validateJoin()) return; // Deny entry if validation fails
 
@@ -114,9 +116,9 @@ function Interview() {
         interview_id: interview_id,
       };
       setInterviewInfo(newInterviewInfo);
-     
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('interviewInfo', JSON.stringify(newInterviewInfo));
+
+      if (typeof window !== "undefined") {
+        localStorage.setItem("interviewInfo", JSON.stringify(newInterviewInfo));
       }
       toast.success("Creating your interview session...");
       await new Promise((resolve) => setTimeout(resolve, 1500)); // Smooth delay
@@ -130,8 +132,12 @@ function Interview() {
     return (
       <div className="flex h-screen items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-red-600 mb-4">Access Denied</h2>
-          <p className="text-gray-600">You do not have permission to access this interview.</p>
+          <h2 className="text-2xl font-bold text-red-600 mb-4">
+            Access Denied
+          </h2>
+          <p className="text-gray-600">
+            You do not have permission to access this interview.
+          </p>
         </div>
       </div>
     );
@@ -139,26 +145,26 @@ function Interview() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-indigo-50/30 py-12 px-4 sm:px-6 lg:px-8">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
         className="max-w-4xl mx-auto"
       >
         {/* Animated Header */}
-        <motion.div 
+        <motion.div
           whileHover={{ scale: 1.02 }}
           className="flex flex-col items-center mb-12"
         >
           <div className="relative w-28 h-28 mb-4">
-            <motion.div 
+            <motion.div
               animate={{ rotate: 360 }}
               transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
               className="absolute inset-0 border-2 border-dashed border-indigo-200 rounded-full"
             />
             <Image
-              src="/Logo.png" 
-              alt="Logo" 
+              src="/logo.png"
+              alt="Logo"
               fill
               className="object-contain p-4"
               priority
@@ -167,11 +173,13 @@ function Interview() {
           <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">
             AI Interview Portal
           </h1>
-          <p className="mt-2 text-gray-500">Next-generation hiring experience</p>
+          <p className="mt-2 text-gray-500">
+            Next-generation hiring experience
+          </p>
         </motion.div>
 
         {/* Glassmorphism Card */}
-        <motion.div 
+        <motion.div
           whileHover={{ y: -5 }}
           className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl overflow-hidden border border-white/20"
         >
@@ -180,11 +188,11 @@ function Interview() {
             <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
               <div>
                 <h2 className="text-2xl font-bold text-white">
-                  {interviewData?.jobPosition || 'AI Interview'}
+                  {interviewData?.jobPosition || "AI Interview"}
                 </h2>
                 <div className="flex items-center gap-2 mt-2 text-indigo-100">
                   <Clock className="h-4 w-4" />
-                  <span>{interviewData?.duration || '30 min'}</span>
+                  <span>{interviewData?.duration || "30 min"}</span>
                 </div>
               </div>
               <div className="flex items-center gap-3 bg-white/10 px-4 py-2 rounded-full">
@@ -206,10 +214,12 @@ function Interview() {
                   {[1, 2, 3].map((step) => (
                     <div key={step} className="flex flex-col items-center">
                       <div className="h-8 w-8 rounded-full bg-indigo-100 border-2 border-indigo-500 flex items-center justify-center">
-                        <span className="text-sm font-medium text-indigo-700">{step}</span>
+                        <span className="text-sm font-medium text-indigo-700">
+                          {step}
+                        </span>
                       </div>
                       <span className="mt-2 text-xs text-gray-500">
-                        {['Setup', 'Interview', 'Results'][step-1]}
+                        {["Setup", "Interview", "Results"][step - 1]}
                       </span>
                     </div>
                   ))}
@@ -219,7 +229,7 @@ function Interview() {
 
             {/* Candidate Form */}
             <div className="space-y-6">
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.2 }}
@@ -235,7 +245,7 @@ function Interview() {
                 />
               </motion.div>
 
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3 }}
@@ -253,7 +263,7 @@ function Interview() {
               </motion.div>
 
               {/* Preparation Checklist */}
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.4 }}
@@ -265,13 +275,13 @@ function Interview() {
                 </h4>
                 <ul className="space-y-3">
                   {[
-                    'Provide a proper name & valid email address',
-                    'Give access to your microphone',
-                    'Ensure a stable internet connection',
-                    'Enable camera permissions',
-                    'Use Chrome or Edge browser',
-                    'Find a quiet environment',
-                    'Have your resume handy'
+                    "Provide a proper name & valid email address",
+                    "Give access to your microphone",
+                    "Ensure a stable internet connection",
+                    "Enable camera permissions",
+                    "Use Chrome or Edge browser",
+                    "Find a quiet environment",
+                    "Have your resume handy",
                   ].map((item, i) => (
                     <li key={i} className="flex items-start gap-3">
                       <div className="flex-shrink-0 mt-0.5">
@@ -295,13 +305,27 @@ function Interview() {
                 <Button
                   onClick={onJoinInterview}
                   // disabled={loading || !userName || !userEmail}
-                  className={`w-full py-4 rounded-xl text-lg font-medium transition-all ${!loading && 'hover:shadow-lg'}`}
+                  className={`w-full py-4 rounded-xl text-lg font-medium transition-all ${!loading && "hover:shadow-lg"}`}
                 >
                   {loading ? (
                     <span className="flex items-center gap-2">
-                      <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      <svg
+                        className="animate-spin h-5 w-5 text-white"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
                       </svg>
                       Preparing...
                     </span>
@@ -319,7 +343,7 @@ function Interview() {
         </motion.div>
 
         {/* Footer Note */}
-        <motion.p 
+        <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8 }}

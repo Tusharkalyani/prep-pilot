@@ -71,7 +71,7 @@ function WelcomeContainer() {
       ) : (
         <div className="w-[50px] h-[50px] rounded-full bg-blue-100 flex items-center justify-center">
           <span className="text-lg font-semibold text-blue-600">
-            {userData.name.charAt(0).toUpperaleCase()}
+            {userData.name.charAt(0).toUpperCase()}
           </span>
         </div>
       )}
