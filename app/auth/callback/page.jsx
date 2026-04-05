@@ -1,8 +1,8 @@
-'use client';
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { supabase } from '@/services/supabaseClient';
-import { toast } from 'sonner';
+"use client";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/services/supabaseClient";
+import { toast } from "sonner";
 
 export default function AuthCallback() {
   const router = useRouter();
@@ -28,12 +28,13 @@ export default function AuthCallback() {
 
       // 1. Check if user already exists
       const { data: existingUser, error: fetchError } = await supabase
-        .from('users')
-        .select('id, role, banned')
-        .eq('email', email)
+        .from("users")
+        .select("id, role, banned")
+        .eq("email", email)
         .single();
 
-      if (fetchError && fetchError.code !== 'PGRST116') { // Not found is ok
+      if (fetchError && fetchError.code !== "PGRST116") {
+        // Not found is ok
         toast.error("Error fetching user profile: " + fetchError.message);
         console.error("Fetch error:", fetchError);
         setLoading(false);
@@ -43,20 +44,22 @@ export default function AuthCallback() {
       // Check if user is banned
       if (existingUser && existingUser.banned) {
         await supabase.auth.signOut();
-        toast.error('Your account has been banned. Please contact support for more information.');
-        router.push('/login');
+        toast.error(
+          "Your account has been banned. Please contact support for more information.",
+        );
+        router.push("/login");
         setLoading(false);
         return;
       }
 
-      let finalRole = 'candidate'; 
+      let finalRole = "candidate";
       let justCreated = false;
 
       if (!existingUser) {
-        const savedRole = localStorage.getItem("pending_role") || 'candidate';
+        const savedRole = localStorage.getItem("pending_role") || "candidate";
         finalRole = savedRole;
-      
-        const { error: insertError } = await supabase.from('users').insert([
+
+        const { error: insertError } = await supabase.from("users").insert([
           {
             email: user.email,
             name: user.user_metadata?.full_name || "No Name",
@@ -67,21 +70,24 @@ export default function AuthCallback() {
         if (insertError) {
           // If duplicate key error, just continue as if user exists
           if (
-            insertError.code === '23505' || // Postgres unique violation
-            (insertError.message && insertError.message.includes('duplicate key'))
+            insertError.code === "23505" || // Postgres unique violation
+            (insertError.message &&
+              insertError.message.includes("duplicate key"))
           ) {
             // User already exists, fetch their role
             const { data: userRow, error: fetchAgainError } = await supabase
-              .from('users')
-              .select('role')
-              .eq('email', user.email)
+              .from("users")
+              .select("role")
+              .eq("email", user.email)
               .single();
             if (userRow) {
               finalRole = userRow.role;
             }
             // Continue to dashboard
           } else {
-            toast.error("Failed to create user profile: " + insertError.message);
+            toast.error(
+              "Failed to create user profile: " + insertError.message,
+            );
             console.error("Insert error:", insertError);
             setLoading(false);
             return;
@@ -96,10 +102,10 @@ export default function AuthCallback() {
       localStorage.removeItem("pending_role");
 
       setLoading(false);
-      if (finalRole === 'recruiter') {
-        router.push('/recruiter/dashboard');
+      if (finalRole === "recruiter") {
+        router.push("/main/recruiter/dashboard");
       } else {
-        router.push('/candidate/dashboard');
+        router.push("/candidate/dashboard");
       }
     };
 
@@ -111,7 +117,9 @@ export default function AuthCallback() {
       <div className="flex h-screen items-center justify-center bg-gray-50">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Finalizing Google login, please wait...</p>
+          <p className="text-gray-600">
+            Finalizing Google login, please wait...
+          </p>
         </div>
       </div>
     );

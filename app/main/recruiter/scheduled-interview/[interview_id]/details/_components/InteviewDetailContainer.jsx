@@ -1,4 +1,9 @@
-import { Calendar, Clock, MessageCircleQuestionIcon, Trash2 } from "lucide-react";
+import {
+  Calendar,
+  Clock,
+  MessageCircleQuestionIcon,
+  Trash2,
+} from "lucide-react";
 import moment from "moment";
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -27,7 +32,8 @@ function InterviewDetailContainer({ interviewDetail }) {
     try {
       const parsed = typeof raw === "string" ? JSON.parse(raw) : raw;
       if (Array.isArray(parsed)) return parsed;
-      if (Array.isArray(parsed?.interviewQuestions)) return parsed.interviewQuestions;
+      if (Array.isArray(parsed?.interviewQuestions))
+        return parsed.interviewQuestions;
       return [];
     } catch {
       return [];
@@ -39,19 +45,19 @@ function InterviewDetailContainer({ interviewDetail }) {
     try {
       // Delete interview results first (if any)
       const { error: resultsError } = await supabase
-        .from('interview_results')
+        .from("interview_results")
         .delete()
-        .eq('interview_id', interviewDetail.interview_id);
+        .eq("interview_id", interviewDetail.interview_id);
 
       if (resultsError) {
-        console.error('Error deleting interview results:', resultsError);
+        console.error("Error deleting interview results:", resultsError);
       }
 
       // Delete the interview
       const { error: interviewError } = await supabase
-        .from('Interviews')
+        .from("Interviews")
         .delete()
-        .eq('interview_id', interviewDetail.interview_id);
+        .eq("interview_id", interviewDetail.interview_id);
 
       if (interviewError) {
         throw interviewError;
@@ -59,11 +65,11 @@ function InterviewDetailContainer({ interviewDetail }) {
 
       toast.success("Interview deleted successfully!");
       setShowDeleteAlert(false);
-      
+
       // Redirect to dashboard
-      router.push('/recruiter/dashboard');
+      router.push("/main/recruiter/dashboard");
     } catch (error) {
-      console.error('Error deleting interview:', error);
+      console.error("Error deleting interview:", error);
       toast.error("Failed to delete interview. Please try again.");
     } finally {
       setDeleting(false);
@@ -100,7 +106,9 @@ function InterviewDetailContainer({ interviewDetail }) {
             <h2 className="text-sm text-gray-500">Created on</h2>
             <h2 className="font-bold flex text-sm items-center gap-2">
               <Calendar className="h-4 w-4" />
-              {moment(interviewDetail?.created_at).format("MMMM Do YYYY, h:mm a")}
+              {moment(interviewDetail?.created_at).format(
+                "MMMM Do YYYY, h:mm a",
+              )}
             </h2>
           </div>
 
@@ -118,7 +126,9 @@ function InterviewDetailContainer({ interviewDetail }) {
         {/* Job Description */}
         <div className="mt-5">
           <h2 className="font-bold">Job Description</h2>
-          <p className="text-sm leading-6 whitespace-pre-wrap">{interviewDetail?.jobDescription}</p>
+          <p className="text-sm leading-6 whitespace-pre-wrap">
+            {interviewDetail?.jobDescription}
+          </p>
         </div>
 
         {/* Interview Questions */}
@@ -128,7 +138,9 @@ function InterviewDetailContainer({ interviewDetail }) {
             {parsedQuestions.map((item, index) => (
               <h2 className="text-sm flex items-center gap-2" key={index}>
                 <MessageCircleQuestionIcon className="h-4 w-4 text-primary" />
-                <span>{index + 1}. {item?.Interviewquestion || item?.question}</span>
+                <span>
+                  {index + 1}. {item?.Interviewquestion || item?.question}
+                </span>
               </h2>
             ))}
           </div>
@@ -141,18 +153,23 @@ function InterviewDetailContainer({ interviewDetail }) {
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Interview</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete the interview for <strong>{interviewDetail?.jobPosition}</strong>? 
-              This action cannot be undone and will permanently remove:
+              Are you sure you want to delete the interview for{" "}
+              <strong>{interviewDetail?.jobPosition}</strong>? This action
+              cannot be undone and will permanently remove:
               <ul className="list-disc list-inside mt-2 space-y-1">
                 <li>The interview link</li>
-                <li>All candidate responses ({interviewDetail['interview_results']?.length || 0} candidates)</li>
+                <li>
+                  All candidate responses (
+                  {interviewDetail["interview_results"]?.length || 0}{" "}
+                  candidates)
+                </li>
                 <li>All feedback and ratings</li>
               </ul>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
-            <AlertDialogAction 
+            <AlertDialogAction
               onClick={handleDelete}
               disabled={deleting}
               className="bg-red-600 hover:bg-red-700 text-white"

@@ -20,8 +20,8 @@ const CREDIT_PACKAGES = [
       "10 Interview Credits",
       "Perfect for small teams",
       "Valid for 6 months",
-      "Email support"
-    ]
+      "Email support",
+    ],
   },
   {
     id: "professional",
@@ -35,8 +35,8 @@ const CREDIT_PACKAGES = [
       "Best value for money",
       "Valid for 12 months",
       "Priority email support",
-      "Bulk interview creation"
-    ]
+      "Bulk interview creation",
+    ],
   },
   {
     id: "enterprise",
@@ -51,9 +51,9 @@ const CREDIT_PACKAGES = [
       "Valid for 12 months",
       "Priority support",
       "Advanced analytics",
-      "Custom integrations"
-    ]
-  }
+      "Custom integrations",
+    ],
+  },
 ];
 
 export default function Billing() {
@@ -64,25 +64,26 @@ export default function Billing() {
 
   const handlePurchase = async () => {
     setLoading(true);
-    
+
     try {
       // Update user credits
       const currentCredits = user?.credits || 0;
       const newCredits = currentCredits + selectedPackage.credits;
-      
+
       const result = await updateUserCredits(newCredits);
-      
+
       if (result.success) {
-        toast.success(`Successfully purchased ${selectedPackage.credits} credits! You now have ${newCredits} credits.`);
-        
+        toast.success(
+          `Successfully purchased ${selectedPackage.credits} credits! You now have ${newCredits} credits.`,
+        );
+
         setTimeout(() => {
-          router.push('/recruiter/dashboard');
+          router.push("/main/recruiter/dashboard");
         }, 2000);
       } else {
         toast.error("Failed to update credits. Please try again.");
         console.error("Credit update error:", result.error);
       }
-      
     } catch (error) {
       toast.error("Purchase failed. Please try again.");
       console.error("Purchase error:", error);
@@ -96,11 +97,7 @@ export default function Billing() {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">
-          <Button
-            variant="ghost"
-            onClick={() => router.back()}
-            className="p-2"
-          >
+          <Button variant="ghost" onClick={() => router.back()} className="p-2">
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <div>
@@ -133,12 +130,12 @@ export default function Billing() {
         {/* Credit Packages */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {CREDIT_PACKAGES.map((pkg) => (
-            <Card 
+            <Card
               key={pkg.id}
               className={`relative cursor-pointer transition-all hover:shadow-lg ${
-                selectedPackage.id === pkg.id 
-                  ? 'ring-2 ring-blue-500 border-blue-500' 
-                  : 'hover:border-gray-300'
+                selectedPackage.id === pkg.id
+                  ? "ring-2 ring-blue-500 border-blue-500"
+                  : "hover:border-gray-300"
               }`}
               onClick={() => setSelectedPackage(pkg)}
             >
@@ -149,7 +146,7 @@ export default function Billing() {
                   </span>
                 </div>
               )}
-              
+
               <CardHeader className="text-center pb-4">
                 <CardTitle className="flex items-center justify-center gap-2">
                   <Coins className="w-6 h-6 text-blue-600" />
@@ -162,7 +159,7 @@ export default function Billing() {
                   ${pkg.pricePerCredit.toFixed(2)} per credit
                 </div>
               </CardHeader>
-              
+
               <CardContent>
                 <div className="space-y-3">
                   {pkg.features.map((feature, index) => (
@@ -172,14 +169,12 @@ export default function Billing() {
                     </div>
                   ))}
                 </div>
-                
+
                 <div className="mt-6 text-center">
                   <div className="text-2xl font-bold text-blue-600 mb-1">
                     {pkg.credits}
                   </div>
-                  <div className="text-sm text-gray-500">
-                    Interview Credits
-                  </div>
+                  <div className="text-sm text-gray-500">Interview Credits</div>
                 </div>
               </CardContent>
             </Card>
@@ -199,22 +194,22 @@ export default function Billing() {
                   {selectedPackage.name}
                 </span>
               </div>
-              
+
               <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
                 <span className="font-medium">Credits:</span>
                 <span className="text-blue-600 font-semibold">
                   {selectedPackage.credits} credits
                 </span>
               </div>
-              
+
               <div className="flex justify-between items-center p-3 bg-blue-50 rounded-lg border border-blue-200">
                 <span className="font-bold">Total:</span>
                 <span className="text-blue-600 font-bold text-lg">
                   ${selectedPackage.price}
                 </span>
               </div>
-              
-              <Button 
+
+              <Button
                 onClick={handlePurchase}
                 disabled={loading}
                 className="w-full bg-blue-600 hover:bg-blue-700"
@@ -228,7 +223,7 @@ export default function Billing() {
                   `Purchase ${selectedPackage.credits} Credits`
                 )}
               </Button>
-              
+
               <p className="text-xs text-gray-500 text-center">
                 Credits are valid for 12 months from purchase date
               </p>

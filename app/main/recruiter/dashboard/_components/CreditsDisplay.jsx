@@ -1,10 +1,10 @@
-'use client';
-import React from 'react';
-import { useUser } from '@/app/provider';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Coins, Plus, AlertCircle } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+"use client";
+import React from "react";
+import { useUser } from "@/app/provider";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Coins, Plus, AlertCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 function CreditsDisplay() {
   const { user } = useUser();
@@ -12,7 +12,7 @@ function CreditsDisplay() {
 
   const handleBuyCredits = () => {
     // Navigate to pricing/buy credits page
-    router.push('/recruiter/billing');
+    router.push("/main/recruiter/billing");
   };
 
   return (
@@ -35,29 +35,29 @@ function CreditsDisplay() {
                   Credits Remaining
                 </div>
               </div>
-              
+
               <div className="text-sm text-gray-600 max-w-md">
                 <p className="mb-2">
-                  Each interview creation costs <strong>1 credit</strong>. 
-                  You can create up to <strong>{user?.credits || 0} more interviews</strong>.
+                  Each interview creation costs <strong>1 credit</strong>. You
+                  can create up to{" "}
+                  <strong>{user?.credits || 0} more interviews</strong>.
                 </p>
                 {user?.credits <= 2 && (
                   <div className="flex items-center gap-2 text-amber-600 bg-amber-50 p-2 rounded-md">
                     <AlertCircle className="w-4 h-4" />
                     <span className="text-xs font-medium">
-                      {user?.credits === 0 
+                      {user?.credits === 0
                         ? "No credits remaining. Purchase more to continue creating interviews."
-                        : user?.credits === 1 
-                        ? "Only 1 credit remaining. Consider purchasing more credits."
-                        : "Low credits remaining. Consider purchasing more credits."
-                      }
+                        : user?.credits === 1
+                          ? "Only 1 credit remaining. Consider purchasing more credits."
+                          : "Low credits remaining. Consider purchasing more credits."}
                     </span>
                   </div>
                 )}
               </div>
             </div>
-            
-            <Button 
+
+            <Button
               onClick={handleBuyCredits}
               className="bg-blue-600 hover:bg-blue-700 text-white"
             >
@@ -71,4 +71,4 @@ function CreditsDisplay() {
   );
 }
 
-export default CreditsDisplay; 
+export default CreditsDisplay;
