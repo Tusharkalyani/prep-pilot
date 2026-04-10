@@ -38,7 +38,7 @@ export default function RecentInterviews() {
       )
   `)
 
-        .eq('email', user.Email)
+        .eq('email', user.email)
         .order('completed_at', { ascending: false })
         .limit(3);
 
@@ -125,10 +125,10 @@ export default function RecentInterviews() {
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
                     <h4 className="font-medium text-sm">
-                      {result.interviews?.jobPosition || 'Interview'}
+                      {result.Interviews?.jobPosition || 'Interview'}
                     </h4>
                     <Badge variant="outline" className="text-xs">
-                      {result.interviews?.type || 'Interview'}
+                      {result.Interviews?.type || 'Interview'}
                     </Badge>
                   </div>
                   <div className="flex items-center gap-3 text-xs text-gray-500">
@@ -138,7 +138,7 @@ export default function RecentInterviews() {
                     </div>
                     <div className="flex items-center gap-1">
                       <Clock className="w-3 h-3" />
-                      {result.interviews?.duration || 'N/A'}
+                      {result.Interviews?.duration || 'N/A'}
                     </div>
                   </div>
                 </div>

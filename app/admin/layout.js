@@ -49,8 +49,8 @@ function AdminLayout({ children }) {
     console.log('Admin Layout - Checking if', user.email, 'contains @admin');
     
     if (!user.email.includes('@admin') && !user.email.includes('@superadmin')) {
-      console.log('Admin Layout - User not admin or superadmin, redirecting to dashboard');
-      router.push('/users');
+      console.log('Admin Layout - User not admin or superadmin, redirecting to home');
+      router.push('/');
       return;
     }
     

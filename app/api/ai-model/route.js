@@ -43,7 +43,7 @@ export async function POST(req) {
 
     const completion =
       await openai.chat.completions.create({
-        model: "meta-llama/llama-3-8b-instruct",
+        model: "google/gemma-3-4b-it:free",
         messages: [
           {
             role: "user",
@@ -63,7 +63,8 @@ export async function POST(req) {
     console.log("AI error:", e);
 
     return NextResponse.json({
-      error: e.message,
+      error: e?.message || "AI generation failed",
+      status: e?.status || 500,
     });
   }
 }

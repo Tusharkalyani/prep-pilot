@@ -23,7 +23,7 @@ function InterviewDetail() {
     try {
       setLoading(true);
       const { data, error } = await supabase
-        .from("Interviews")
+        .from("interviews")
         .select(
           "jobPosition, jobDescription, type, questionList, duration, interview_id, created_at, interview_results (email, fullname,conversation_transcript, recommendations, interview_id,completed_at)"
         )
@@ -57,8 +57,8 @@ function InterviewDetail() {
     <div className="mt-5 space-y-6">
       <h2 className="font-bold text-2xl">Interview Details</h2>
       <InterviewDetailContainer interviewDetail={interviewDetail} />
-      <CandidateList 
-        candidateList={interviewDetail["interview_results"] || []} 
+      <CandidateList
+        candidateList={interviewDetail["interview_results"] || []}
       />
     </div>
   );

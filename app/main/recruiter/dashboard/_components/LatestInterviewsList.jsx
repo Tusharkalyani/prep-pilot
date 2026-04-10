@@ -20,14 +20,14 @@ function LatestInterviewsList() {
 
   const GetInterviewList = async () => {
     let { data: Interviews, error } = await supabase
-    .from("Interviews")
-    .select("*, interview_results(*)") // <-- JOIN the related table
-    .eq("userEmail", user?.email)
-    .order('id', { ascending: false })
-    .limit(6);
-  
+      .from("interviews")
+      .select("*, interview_results(*)") // <-- JOIN the related table
+      .eq("userEmail", user?.email)
+      .order('id', { ascending: false })
+      .limit(6);
+
     console.log(Interviews);
-    setInterviewList(Interviews);
+    setInterviewList(Interviews ?? []);
   };
 
   const handleInterviewDelete = () => {
@@ -54,9 +54,9 @@ function LatestInterviewsList() {
         InterviewList &&
         <div className="grid grid-cols-2 xl:grid-cols-3 gap-5">
           {InterviewList.map((interview, index) => (
-            <InterviewCard 
-              interview={interview} 
-              key={index} 
+            <InterviewCard
+              interview={interview}
+              key={index}
               onDelete={handleInterviewDelete}
             />
           ))}

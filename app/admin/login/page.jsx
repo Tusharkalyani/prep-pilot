@@ -25,7 +25,7 @@ function AdminLogin() {
         if (session.user.email.includes('@admin') || session.user.email.includes('@superadmin')) {
           router.push('/admin');
         } else {
-          router.push('/users');
+          router.push('/admin/users');
         }
       }
     };
@@ -77,8 +77,8 @@ function AdminLogin() {
         toast.success('Welcome, Admin!');
         router.push('/admin');
       } else {
-        toast.error('Access denied. Admin privileges required.');
-        await supabase.auth.signOut();
+        toast.success('Login successful!');
+        router.push('/admin/users');
       }
     } catch (error) {
       toast.error('Login failed. Please try again.');

@@ -27,61 +27,79 @@ function QuestionList({ formData, onCreateLink }) {
 
   // ✅ FIXED FUNCTION
   const GenerateQuestionList = async () => {
-  setLoading(true);
-  hasCalled.current = true;
+    setLoading(true);
+    hasCalled.current = true;
 
-  try {
-
-    const result = await axios.post(
-      "/api/ai-model",
-      formData,
-      {
+    try {
+      const result = await axios.post("/api/ai-model", formData, {
         headers: {
           "Content-Type": "application/json",
         },
-      }
-    );
+      });
 
-    console.log("API:", result.data);
+      console.log("API response:", result.data);
 
-    const rawContent =
-      result?.data?.content ||
-      result?.data?.Content ||
-      "";
-
-    if (!rawContent) {
-      toast("No response");
-      setLoading(false);
-      return;
-    }
-
-    let parsedData;
-
-    try {
-      parsedData = JSON.parse(rawContent);
-    } catch {
-
-      const match = rawContent.match(/\{[\s\S]*\}/);
-
-      if (!match) {
-        console.log(rawContent);
-        toast("Invalid format");
+      // Surface API-level errors (e.g. 402 insufficient credits)
+      if (result?.data?.error) {
+        toast.error(`AI Error: ${result.data.error}`);
         setLoading(false);
         return;
       }
 
-      parsedData = JSON.parse(match[0]);
+      const rawContent =
+        result?.data?.content || result?.data?.Content || "";
+
+      if (!rawContent) {
+        toast.error("No response from AI. Please try again.");
+        setLoading(false);
+        return;
+      }
+
+      let parsedData;
+
+      try {
+        parsedData = JSON.parse(rawContent);
+      } catch {
+        const match = rawContent.match(/\{[\s\S]*\}/);
+
+        if (!match) {
+          console.log(rawContent);
+          toast("Invalid format");
+          setLoading(false);
+          return;
+        }
+
+        try {
+          parsedData = JSON.parse(match[0]);
+        } catch (parseErr) {
+          console.log("Failed to parse matched JSON", parseErr);
+          toast("Failed to parse JSON response");
+          setLoading(false);
+          return;
+        }
+      }
+
+      // Normalize keys in case model returned different variations
+      if (parsedData) {
+        const questionsArray =
+          parsedData.interviewQuestions ||
+          parsedData.InterviewQuestions ||
+          parsedData.questions ||
+          parsedData.Questions;
+
+        if (questionsArray && !parsedData.interviewQuestions) {
+          parsedData.interviewQuestions = questionsArray;
+        }
+      }
+
+      setQuestionList(parsedData);
+    } catch (e) {
+      console.log(e);
+      toast("Server error");
     }
 
-    setQuestionList(parsedData);
-
-  } catch (e) {
-    console.log(e);
-    toast("Server error");
-  }
-
-  setLoading(false);
-};
+    setLoading(false);
+  };
 
   const handleAddQuestion = () => {
     if (!newQuestion.trim()) {
@@ -116,50 +134,83 @@ function QuestionList({ formData, onCreateLink }) {
   };
 
   const onFinish = async () => {
-    setSaveLoading(true);
+    if (!questionList?.interviewQuestions?.length) {
+      toast.error("No questions to save. Please generate questions first.");
+      return;
+    }
 
+    setSaveLoading(true);
     const interview_id = uuidv4();
 
     try {
-      const currentCredits = user?.credits || 0;
+      // Fetch fresh user data to get current credits
+      const { data: freshUser, error: userErr } = await supabase
+        .from("users")
+        .select("credits, email")
+        .eq("email", user?.email)
+        .single();
 
-      if (currentCredits <= 0) {
-        toast.error("No credits");
+      if (userErr || !freshUser) {
+        toast.error("Could not verify your account. Please log in again.");
         setSaveLoading(false);
         return;
       }
 
-      const newCredits = currentCredits - 1;
+      const currentCredits = freshUser.credits ?? 0;
 
-      await updateUserCredits(newCredits);
+      if (currentCredits <= 0) {
+        toast.error("You have no credits remaining. Please purchase more.");
+        setSaveLoading(false);
+        return;
+      }
 
-      const { error } = await supabase
-        .from("Interviews")
+      // Deduct 1 credit
+      const creditResult = await updateUserCredits(currentCredits - 1);
+      if (!creditResult?.success) {
+        toast.error("Failed to deduct credits. Please try again.");
+        setSaveLoading(false);
+        return;
+      }
+
+      // Normalize type: store as string (comma-separated if array)
+      const typeValue = Array.isArray(formData.type)
+        ? formData.type.join(", ")
+        : formData.type || "";
+
+      // Save interview to DB
+      const { error: insertError } = await supabase
+        .from("interviews")
         .insert([
           {
-            ...formData,
+            jobPosition: formData.jobPosition,
+            jobDescription: formData.jobDescription,
+            duration: formData.duration,
+            type: typeValue,
             questionList: questionList,
             userEmail: user?.email,
             interview_id: interview_id,
           },
         ]);
 
-      setSaveLoading(false);
-
-      if (error) {
-        toast("Save failed");
+      if (insertError) {
+        // Rollback the credit deduction
+        await updateUserCredits(currentCredits);
+        toast.error(`Failed to save interview: ${insertError.message}`);
+        setSaveLoading(false);
         return;
       }
 
-      toast.success("Saved");
+      toast.success("Interview created successfully!");
       onCreateLink(interview_id);
 
     } catch (e) {
-      console.log(e);
-      toast("Error");
+      console.error("onFinish error:", e);
+      toast.error("Unexpected error. Please try again.");
+    } finally {
       setSaveLoading(false);
     }
   };
+
 
   return (
     <div>

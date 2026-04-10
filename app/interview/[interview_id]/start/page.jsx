@@ -367,7 +367,7 @@ console.log("✅ Parsed Feedback:", parsedTranscript);
           <div className="min-h-16 flex items-center justify-center">
             {subtitles ? (
               <p className="text-center text-gray-700 animate-fadeIn">
-                "{subtitles}"
+                {subtitles}
               </p>
             ) : (
               <p className="text-center text-gray-400">

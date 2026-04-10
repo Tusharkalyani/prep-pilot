@@ -129,13 +129,11 @@ export default function RecruiterProfile() {
       // Immediately save to database
       const { error: updateError } = await supabase
         .from('users')
-        .upsert({
-          email: user.email,
+        .update({
           name: profileData.fullname,
           picture: newPictureUrl,
-        }, {
-          onConflict: 'email'
-        });
+        })
+        .eq('email', user.email);
 
       if (updateError) {
         console.error('Database update error:', updateError);
@@ -170,13 +168,11 @@ export default function RecruiterProfile() {
       // Update users table
       const { error } = await supabase
         .from('users')
-        .upsert({
-          email: user.email,
+        .update({
           name: profileData.fullname,
           picture: profileData.picture,
-        }, {
-          onConflict: 'email'
-        });
+        })
+        .eq('email', user.email);
 
       if (error) {
         console.error('Update error:', error);

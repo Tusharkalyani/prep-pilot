@@ -35,7 +35,7 @@ function Interview() {
     try {
       provider = JSON.parse(localStorage.getItem("supabase.auth.token"))
         ?.currentSession?.user?.app_metadata?.provider;
-    } catch {}
+    } catch { }
   }
   const isGoogleUser = provider === "google";
 
@@ -68,7 +68,7 @@ function Interview() {
     setLoading(true);
     try {
       const { data: Interviews, error } = await supabase
-        .from("Interviews")
+        .from("interviews")
         .select("*, interview_results(*)")
         .eq("interview_id", interview_id);
 

@@ -43,7 +43,7 @@ function CreateInterview() {
     if (!formData.jobPosition) missingField = "Job Position";
     else if (!formData.jobDescription) missingField = "Job Description";
     else if (!formData.duration) missingField = "Duration";
-    else if (!formData.type) missingField = "Interview Type";
+    else if (!formData.type || formData.type.length === 0) missingField = "Interview Type";
 
     if (missingField) {
       toast.error(`${missingField} is required`);

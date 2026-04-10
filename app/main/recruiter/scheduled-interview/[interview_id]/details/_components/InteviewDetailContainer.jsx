@@ -55,7 +55,7 @@ function InterviewDetailContainer({ interviewDetail }) {
 
       // Delete the interview
       const { error: interviewError } = await supabase
-        .from("Interviews")
+        .from("interviews")
         .delete()
         .eq("interview_id", interviewDetail.interview_id);
 

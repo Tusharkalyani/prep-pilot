@@ -38,7 +38,7 @@ export default function CandidateInterviews() {
             userEmail
           )
         `)
-        .eq('email', user.Email)
+        .eq('email', user.email)
         .order('completed_at', { ascending: false });
 
       if (error) {
@@ -121,7 +121,7 @@ export default function CandidateInterviews() {
                     <div className="flex items-center gap-3 mb-2">
                       <Video className="w-5 h-5 text-blue-600" />
                       <CardTitle className="text-lg">
-                        {result.interviews?.jobPosition || 'Interview'}
+                        {result.Interviews?.jobPosition || 'Interview'}
                       </CardTitle>
                     </div>
                     <div className="flex items-center gap-4 text-sm text-gray-500">
@@ -131,10 +131,10 @@ export default function CandidateInterviews() {
                       </div>
                       <div className="flex items-center gap-1">
                         <Clock className="w-4 h-4" />
-                        {result.interviews?.duration || 'N/A'}
+                        {result.Interviews?.duration || 'N/A'}
                       </div>
                       <Badge variant="outline" className="text-xs">
-                        {result.interviews?.type || 'Interview'}
+                        {result.Interviews?.type || 'Interview'}
                       </Badge>
                     </div>
                   </div>
@@ -144,7 +144,7 @@ export default function CandidateInterviews() {
                       variant={result.status === 'completed' ? 'default' : 'secondary'}
                       className="text-xs"
                     >
-                      {result.status === 'completed' ? 'In Progress' : 'Completed'}
+                      {result.status === 'completed' ? 'Completed' : 'In Progress'}
                     </Badge>
                   </div>
                 </div>

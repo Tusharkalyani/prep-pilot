@@ -78,7 +78,7 @@ export const AuthContextProvider = ({ children }) => {
 
       const { data: userData, error: profileError } = await supabase
         .from("users")
-        .select("role, banned")
+        .select("*")
         .eq("email", email.toLowerCase())
         .single();
 
@@ -150,6 +150,26 @@ export const AuthContextProvider = ({ children }) => {
     }
   };
 
+  // Update user credits in DB and local state
+  const updateUserCredits = async (newCredits) => {
+    if (!userProfile?.email) return { success: false, error: "Not authenticated" };
+    try {
+      const { data, error } = await supabase
+        .from("users")
+        .update({ credits: newCredits })
+        .eq("email", userProfile.email)
+        .select();
+      if (!error && data?.[0]) {
+        setUserProfile(data[0]);
+        return { success: true, data: data[0] };
+      }
+      return { success: false, error };
+    } catch (err) {
+      console.error("Error updating credits:", err);
+      return { success: false, error: err };
+    }
+  };
+
   // Sign out
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
@@ -177,7 +197,7 @@ export const AuthContextProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ session, userProfile, signInUser, signUpNewUser, signOut }}
+      value={{ session, userProfile, signInUser, signUpNewUser, signOut, fetchUserProfile, updateUserCredits }}
     >
       {children}
     </AuthContext.Provider>
